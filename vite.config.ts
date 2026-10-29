@@ -1,6 +1,7 @@
 import { fileRoutes } from 'filesystem-routing/vite';
 import { defineConfig } from 'vitest/config';
 import solid from '@solidjs/vite-plugin';
+import dts from 'vite-plugin-dts';
 
 import path from 'node:path';
 
@@ -10,6 +11,7 @@ export default defineConfig({
   // the entries around src/App.tsx (wrapped in src/Document.tsx) and `vite build`
   // prerenders the shell into a purely static dist/client.
   plugins: [
+    dts({ insertTypesEntry: true }),
     // `extensions` makes @solidjs/vite-plugin also compile the `?pick=` route
     // modules the fileRoutes plugin emits (their ids end in a query string).
     // solid({ start: true, extensions: ['.jsx', '.tsx'], diagnostics: true }), // add `ssr: true` for streaming SSR
@@ -43,9 +45,21 @@ export default defineConfig({
     target: 'esnext',
     assetsInlineLimit: 0,
     lib: {
-      entry: path.resolve(__dirname, 'src/tools/dpa/index.ts'),
+      entry: {
+        'dpa--component--web': path.resolve(__dirname, 'src/tools/dpa/index.ts'),
+        'dpa--component--solid': path.resolve(__dirname, 'src/tools/dpa/component.tsx'),
+      },
       name: 'ownthehou-dpa',
       fileName: (format) => `ownthehou-dpa.${format}.js`
-    }
+    },
+    rollupOptions: {
+      external: ['solid-js', 'solid-element'],
+      output: {
+        globals: {
+          'solid-js': 'Solid',
+          'solid-element': 'SolidElement'
+        }
+      },
+    },
   },
 });
