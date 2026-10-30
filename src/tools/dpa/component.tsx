@@ -73,7 +73,6 @@ export const MyComponent: Component<MyComponentProps> = ({
   allowInputAddress = false,
   allowInputCoordinates = true,
   allowInputBounds = false,
-  ...props
 }, { element }) => {
   
   onSettled(() => {
