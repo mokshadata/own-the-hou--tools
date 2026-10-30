@@ -3,6 +3,17 @@
   "version": "0.0.0",
   "description": "",
   "type": "module",
+  "files": ["dist"],
+  "main": "./dist/ownthehou-dpa.es.js",
+  "module": "./dist/ownthehou-dpa.es.js",
+  "types": "./dist/ownthehou-dpa.d.ts",
+  "exports": {
+    ".": {
+      "solid": "./src/tools/dpa/list.ts",
+      "import": "./dist/ownthehou-dpa.es.js",
+      "types": "./dist/ownthehou-dpa.d.ts"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
