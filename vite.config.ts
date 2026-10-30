@@ -46,11 +46,11 @@ export default defineConfig({
     assetsInlineLimit: 0,
     lib: {
       entry: {
-        'dpa--component--web': path.resolve(__dirname, 'src/tools/dpa/index.ts'),
-        'dpa--component--solid': path.resolve(__dirname, 'src/tools/dpa/list.ts'),
+        'ownthehoutools--dpa--web': path.resolve(__dirname, 'src/tools/dpa/index.ts'),
+        'ownthehoutools--dpa--solid': path.resolve(__dirname, 'src/tools/dpa/list.ts'),
       },
       name: 'ownthehou-dpa',
-      fileName: (format) => `ownthehou-dpa.${format}.js`,
+      fileName: (format) => `[name]-${format}.js`,
       formats: ['es'],
     },
     rollupOptions: {
