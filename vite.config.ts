@@ -50,7 +50,7 @@ export default defineConfig({
         'ownthehoutools--dpa--solid': path.resolve(__dirname, 'src/tools/dpa/list.ts'),
       },
       name: 'ownthehou-dpa',
-      fileName: (format) => `[name]-${format}.js`,
+      fileName: (format) => `[name].${format}.js`,
       formats: ['es'],
     },
     rollupOptions: {
