@@ -46,8 +46,8 @@ export default defineConfig({
     assetsInlineLimit: 0,
     lib: {
       entry: {
-        'ownthehoutools--dpa--web': path.resolve(__dirname, 'src/tools/dpa/index.ts'),
-        'ownthehoutools--dpa--solid': path.resolve(__dirname, 'src/tools/dpa/list.ts'),
+        'ownthehoutools--dpa--web': path.resolve(import.meta.dirname, 'src/tools/dpa/index.ts'),
+        'ownthehoutools--dpa--solid': path.resolve(import.meta.dirname, 'src/tools/dpa/list.ts'),
       },
       name: 'ownthehou-dpa',
       fileName: (format) => `[name].${format}.js`,
@@ -63,4 +63,8 @@ export default defineConfig({
       },
     },
   },
+  resolve: {
+    // Adds custom tags to the default allowed list
+    conditions: ['solid']
+  }
 });
