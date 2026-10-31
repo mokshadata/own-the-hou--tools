@@ -77,6 +77,7 @@ export const MyComponent: Component<MyComponentProps> = ({
   
   onSettled(() => {
     const shadowRoot = element.shadowRoot;
+    if (!shadowRoot) { return }
     let parentStyles = new CSSStyleSheet();
     parentStyles.replaceSync(`
       ${

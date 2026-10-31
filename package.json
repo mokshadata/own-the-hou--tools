@@ -7,13 +7,6 @@
   "main": "./dist/ownthehoutools--dpa--solid.es.js",
   "module": "./dist/ownthehoutools--dpa--solid.es.js",
   "types": "./dist/ownthehoutools--dpa--solid.d.ts",
-  "exports": {
-    ".": {
-      "solid": "./src/tools/dpa/list.ts",
-      "import": "./dist/ownthehoutools--dpa--solid.es.js",
-      "types": "./dist/ownthehoutools--dpa--solid.d.ts"
-    }
-  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
