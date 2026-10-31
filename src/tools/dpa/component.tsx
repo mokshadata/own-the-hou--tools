@@ -73,11 +73,11 @@ export const MyComponent: Component<MyComponentProps> = ({
   allowInputAddress = false,
   allowInputCoordinates = true,
   allowInputBounds = false,
-}, { element }) => {
+}, node) => {
   
   onSettled(() => {
-    const shadowRoot = element.shadowRoot;
-    if (!shadowRoot) { return }
+    if (!node) { return }
+    const shadowRoot = node.element.shadowRoot;
     let parentStyles = new CSSStyleSheet();
     parentStyles.replaceSync(`
       ${
