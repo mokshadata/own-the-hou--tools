@@ -76,6 +76,23 @@ export const MyComponent: Component<MyComponentProps> = ({
 }, node) => {
   
   onSettled(() => {
+    if (initialHouseholdIncome) {
+      setHouseholdIncome(initialHouseholdIncome)
+    }
+  
+    if (initialHouseholdSize) {
+      setHouseholdSize(initialHouseholdSize)
+    }
+  
+    if (initialTargetHomePrice) {
+      setHouseListingPrice(initialTargetHomePrice)
+    }
+  
+    if (initialCoordinates) {
+      setLongitude(initialCoordinates[0])
+      setLatitude(initialCoordinates[1])
+    }
+
     if (!node) { return }
     const shadowRoot = node.element.shadowRoot;
     let parentStyles = new CSSStyleSheet();
@@ -94,23 +111,6 @@ export const MyComponent: Component<MyComponentProps> = ({
         ...shadowRoot.adoptedStyleSheets,
         parentStyles,
       ]
-    }
-
-    if (initialHouseholdIncome) {
-      setHouseholdIncome(initialHouseholdIncome)
-    }
-  
-    if (initialHouseholdSize) {
-      setHouseholdSize(initialHouseholdSize)
-    }
-  
-    if (initialTargetHomePrice) {
-      setHouseListingPrice(initialTargetHomePrice)
-    }
-  
-    if (initialCoordinates) {
-      setLongitude(initialCoordinates[0])
-      setLatitude(initialCoordinates[1])
     }
   })
 
