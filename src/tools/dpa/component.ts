@@ -1,0 +1,1 @@
+export { DPATool, DPAProgramsList } from './component.tsx'

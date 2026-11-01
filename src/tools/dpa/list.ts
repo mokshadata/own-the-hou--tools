@@ -1,1 +1,0 @@
-export { DPATool, DPAProgramsList } from './component'

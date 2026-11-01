@@ -66,8 +66,9 @@ export default defineConfig({
     assetsInlineLimit: 0,
     lib: {
       entry: {
-        'ownthehoutools--dpa--web': path.resolve(import.meta.dirname, 'src/tools/dpa/index.ts'),
-        'ownthehoutools--dpa--solid': path.resolve(import.meta.dirname, 'src/tools/dpa/list.ts'),
+        'ownthehoutools--dpa-program-list--web': path.resolve(import.meta.dirname, 'src/tools/dpa/web/list.ts'),
+        'ownthehoutools--dpa-tool--web': path.resolve(import.meta.dirname, 'src/tools/dpa/web/tool.ts'),
+        'ownthehoutools--dpa--solid': path.resolve(import.meta.dirname, 'src/tools/dpa/component.ts'),
       },
       name: 'ownthehou-dpa',
       fileName: (format) => `[name].${format}.js`,
