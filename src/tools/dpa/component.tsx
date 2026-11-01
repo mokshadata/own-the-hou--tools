@@ -1,10 +1,10 @@
 import type { Component } from "solid-js";
 import { createMemo, For, onSettled, createSignal } from "solid-js";
 
-import { getMatchingPrograms, getMatchingProgramsGeo } from "./calculate";
+import { getMatchingPrograms, } from "./calculate";
 import { getHTMLFromMarkdown } from "../../utilities/";
 
-import type { boundNames, ProgramRenderable, MatchingProgramParams } from "./calculate";
+import type { MatchingProgramParams } from "./calculate";
 
 import { Program, ProgramBadge } from "./program";
 
@@ -30,21 +30,15 @@ export interface DPAToolProps extends DPAProgramListProps {
 async function fetchPrograms({
   householdSize,
   annualIncome,
-  geoLimits,
   coordinates,
   houseListingPrice,
-  downPaymentPercentLower,
-  downPaymentPercentUpper,
 }: MatchingProgramParams): Promise<ProgramRenderable[]> {
 
   const response = await (Promise.all(getMatchingPrograms({
     householdSize,
     annualIncome,
-    geoLimits,
     coordinates,
     houseListingPrice,
-    downPaymentPercentLower,
-    downPaymentPercentUpper,
   }).map(async (program) => ({
     ...program,
     about: await getHTMLFromMarkdown(program.description),
@@ -97,24 +91,13 @@ export const DPAProgramsList: Component<DPAProgramListProps> = ({
 
   const coordinates = () => (longitude() && latitude() && [longitude(), latitude()] || null);
 
-  const geoLimits = () => (coordinates() && getMatchingProgramsGeo(coordinates()) || [])
-
-  const downPaymentUpper = () => (houseListingPrice() && houseListingPrice() * downPaymentPercentUpper())
-  const downPaymentLower = () => (houseListingPrice() && houseListingPrice() * downPaymentPercentLower())
-
-  const programs = createMemo(() => fetchPrograms(
-    // {}
-    {
-      householdSize: householdSize(),
-      annualIncome: householdIncome(),
-      coordinates: coordinates(), // [-95.374543, 29.850715],
-      // coordinates: [-95.484657, 29.930173],
-      // geoLimits: ['Texas', 'Harris County unincorporated'],
-      houseListingPrice: houseListingPrice(),
-      downPaymentPercentLower: downPaymentPercentLower(),
-      downPaymentPercentUpper: downPaymentPercentUpper(),
-    }
-  ));
+  const programs = () => getMatchingPrograms({
+    householdSize: householdSize(),
+    annualIncome: householdIncome(),
+    coordinates: coordinates(), // [-95.374543, 29.850715],
+    // coordinates: [-95.484657, 29.930173],
+    houseListingPrice: houseListingPrice(),
+  });
   
   return (<>
     <For each={programs()}>{ (program) => (
@@ -176,24 +159,13 @@ export const DPATool: Component<DPAToolProps> = ({
 
   const coordinates = () => (longitude() && latitude() && [longitude(), latitude()] || null);
 
-  const geoLimits = () => (coordinates() && getMatchingProgramsGeo(coordinates()) || [])
-
-  const downPaymentUpper = () => (houseListingPrice() && houseListingPrice() * downPaymentPercentUpper())
-  const downPaymentLower = () => (houseListingPrice() && houseListingPrice() * downPaymentPercentLower())
-
-  const programs = createMemo(() => fetchPrograms(
-    // {}
-    {
-      householdSize: householdSize(),
-      annualIncome: householdIncome(),
-      coordinates: coordinates(), // [-95.374543, 29.850715],
-      // coordinates: [-95.484657, 29.930173],
-      // geoLimits: ['Texas', 'Harris County unincorporated'],
-      houseListingPrice: houseListingPrice(),
-      downPaymentPercentLower: downPaymentPercentLower(),
-      downPaymentPercentUpper: downPaymentPercentUpper(),
-    }
-  ));
+  const programs = () => getMatchingPrograms({
+    householdSize: householdSize(),
+    annualIncome: householdIncome(),
+    coordinates: coordinates(), // [-95.374543, 29.850715],
+    // coordinates: [-95.484657, 29.930173],
+    houseListingPrice: houseListingPrice(),
+  });
   
   return (<>
     {(allowInputCoordinates || allowInputHouseholdIncome || allowInputHouseholdSize || allowInputTargetHomePrice) && <form>
@@ -248,9 +220,8 @@ export const DPATool: Component<DPAToolProps> = ({
           defaultValue={latitude()}
         />
       </div>
-      {geoLimits().length && <p>Your target home is in the following geographic limits: {geoLimits().join(', ')}</p> || null}
-      </div>)}
-    </form>}
+    </div>)}
+  </form>}
 
     <For each={programs()}>{ (program) => (
       <Program

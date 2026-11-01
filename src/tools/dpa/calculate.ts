@@ -1,4 +1,3 @@
-import type { VFile } from "vfile";
 import { booleanContains } from "@turf/turf";
 
  import cohLogoDataURL from '../../images/coh-hcdd.png?base64';
@@ -7,9 +6,7 @@ import { booleanContains } from "@turf/turf";
  import texasHomebuyersLogoDataURL from '../../images/texas-homebuyers.png?base64';
  import tsahcLogoDataURL from '../../images/tsahc.png?base64';
 
-import type { GeoJSON, Point, Position } from "geojson";
-
-import { formatCurrency } from "../../utilities";
+import type { Position } from "geojson";
 
 import programBoundsGeoJSON from "./program-bounds.geojson";
 
@@ -31,7 +28,6 @@ export interface ProgramBase {
   programLogo: string,
   isActive: boolean,
   calcAvailableAmount: Function,
-  descriptionTemplate: Function,
   upperLimit: LimitName,
   geoLimits: boundNames[],
 }
@@ -50,10 +46,6 @@ export interface ProgramAvailable extends Program {
   state: 'eligible-full' | 'eligible-partial' | 'ineligible' | 'inactive' | 'needs-information',
   stateRank: 1 | 2 | 3 | 4 | 5 | 6,
   order: number,
-}
-
-export interface ProgramRenderable extends ProgramAvailable {
-  about: VFile,
 }
 
 export const limitsList: Limit[] = [
@@ -167,15 +159,6 @@ export const programs: ProgramBase[] = [
     programLogo: cohLogoDataURL,
     isActive: true,
     calcAvailableAmount: (info) => (50000),
-    descriptionTemplate: (info) => (`
-The City of Houston offers up to <span class="border-bottom border-1 border-black fst-italic">$50,000</span> to income-qualified residents.
-
-The City assists first-time homebuyers who buy a home within the city limits through their Homebuyer Assistance Program.
-
-For more information, please visit: [houstontx.gov/housing/hap.html](https://houstontx.gov/housing/hap.html)
-
-If you have questions or want to talk to someone with the City of Houston Housing and Community Development about this program, give them a call at 832-394-6200.
-    `),
     upperLimit: 'AMI 80',
     geoLimits: ['City of Houston'],
   },
@@ -184,15 +167,6 @@ If you have questions or want to talk to someone with the City of Houston Housin
     programLogo: hcltLogoDataURL,
     isActive: false,
     calcAvailableAmount: (info) => (150000),
-    descriptionTemplate: (info) => (`
-With the Houston Community Land Trust Homebuyer Choice Program, a qualified homebuyer can receive up to <span class="border-bottom border-1 border-black fst-italic">$150,000</span> or $100,000 in financial assistance grants to help lower the cost of buying a high-quality home in the City of Houston that meets the program criteria. 
-
-The homebuyer contributes what they can afford to their home purchase, usually in the form of a standard mortgage. The financial assistance grant helps cover the rest of the home's purchase price, as well as the buyer's reasonable closing costs.
-
-For more information, please visit:  [houstonclt.org](https://www.houstonclt.org/)
-
-If you have questions or want to talk to someone with the Houston Community Land Trust about this program, give them a call at 713-512-5575.
-    `),
     upperLimit: 'AMI 80',
     geoLimits: ['City of Houston'],
   },
@@ -201,13 +175,6 @@ If you have questions or want to talk to someone with the Houston Community Land
     programLogo: harrisCountyLogoDataURL,
     isActive: true,
     calcAvailableAmount: (info) => (40000),
-    descriptionTemplate: (info) => (`
-Harris County offers up to <span class="border-bottom border-1 border-black fst-italic">$40,000</span> towards the purchase of new and pre-existing homes in the unincorporated areas of Harris County.  
-
-For more information, please visit: [csd.harriscountytx.gov/Housing-and-Community-Development/Programs-and-Services/Downpayment-Assistance-Program](https://csd.harriscountytx.gov/Housing-and-Community-Development/Programs-and-Services/Downpayment-Assistance-Program)
-
-If you have questions or want to talk to someone with the Harris County Community Services Department about this program, give them a call at 713-578-2000.
-    `),
     upperLimit: 'AMI 120',
     geoLimits: ['Harris County unincorporated'],
   },
@@ -216,13 +183,6 @@ If you have questions or want to talk to someone with the Harris County Communit
     programLogo: texasHomebuyersLogoDataURL,
     isActive: true,
     calcAvailableAmount: (info) => (0.05 * info.houseListingPrice),
-    descriptionTemplate: (info) => (`
-The State of Texas offers up to 5% of the purchase price of your home${info.houseListingPrice && ` (<span class="border-bottom border-1 border-black fst-italic">${formatCurrency(0.05 * info.houseListingPrice)}</span>)` || ''}.
-
-For more information, please visit:  [thetexashomebuyerprogram.com](https://thetexashomebuyerprogram.com/)
-
-If you have questions or want to talk to someone with the Texas Department of Housing and Community Affairs about this program, give them a call at 1-800-792-1119.
-    `),
     upperLimit: 'AMI 120',
     geoLimits: ['Texas'],
   },
@@ -231,13 +191,6 @@ If you have questions or want to talk to someone with the Texas Department of Ho
     programLogo: tsahcLogoDataURL,
     isActive: true,
     calcAvailableAmount: (info) => (0.05 * info.houseListingPrice),
-    descriptionTemplate: (info) => (`
-The Texas State Affordable Housing Corporation offers up to 5% of the purchase price of your home${info.houseListingPrice && ` (<span class="border-bottom border-1 border-black fst-italic">${formatCurrency(0.05 * info.houseListingPrice)}</span>)` || ''}.
-
-For more information, please visit: [tsahc.org/home-buyer-programs](https://www.tsahc.org/home-buyer-programs)
-
-If you have questions or want to talk to someone with the Texas State Affordable Housing Corporation about this program, give them a call at 1-877-508-4611.
-    `),
     upperLimit: 'TSAHC Limit',
     geoLimits: ['Texas'],
   },
@@ -246,7 +199,6 @@ If you have questions or want to talk to someone with the Texas State Affordable
 export interface MatchingProgramParams {
   householdSize?: number,
   annualIncome?: number,
-  geoLimits?: boundNames[],
   coordinates?: Position,
   houseListingPrice?: number,
 }
@@ -261,7 +213,6 @@ export interface MatchingProgramParams {
 export function getMatchingPrograms({
   householdSize,
   annualIncome,
-  geoLimits,
   coordinates,
   houseListingPrice,
 }: MatchingProgramParams):ProgramAvailable[] {
@@ -269,9 +220,9 @@ export function getMatchingPrograms({
   const matchingLimits = householdSize && annualIncome && getMatchingLimits(householdSize, annualIncome) || []
   const matchedLimits = matchingLimits.map((limit) => (limit.limitName))
 
-  let boundNames = geoLimits
+  let boundNames = undefined
 
-  if (coordinates && !geoLimits) {
+  if (coordinates) {
     boundNames = getMatchingProgramsGeo(coordinates)
   }
 
@@ -291,17 +242,6 @@ export function getMatchingPrograms({
     }))
     .map((program) => ({
       ...program,
-      description: program.descriptionTemplate({
-
-        householdSize,
-        annualIncome,
-        geoLimits,
-        coordinates,
-        houseListingPrice,
-
-        meetsHouseholdLimits: program.meetsHouseholdLimits,
-        meetsGeoLimits: program.meetsGeoLimits,
-      }),
       availableDPA: !(program.meetsHouseholdLimits === false || program.meetsGeoLimits === false || program.isActive === false) && program.calcAvailableAmount({
         houseListingPrice,
       }) || 0,
