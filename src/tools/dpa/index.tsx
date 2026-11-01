@@ -1,5 +1,5 @@
 import { customElement } from "@solidjs/element";
-import { MyComponent } from "./component";
+import { DPATool } from "./component";
 // import { isStatic } from "solid-js";
 
 customElement("ownthehou-dpa",
@@ -9,5 +9,5 @@ customElement("ownthehou-dpa",
     initialHouseholdIncome: undefined,
     initialCoordinates: undefined,
   },
-  MyComponent,
+  DPATool,
 )

@@ -1,1 +1,1 @@
-export { MyComponent } from './component'
+export { DPATool } from './component'

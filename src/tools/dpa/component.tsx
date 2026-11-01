@@ -8,7 +8,7 @@ import type { boundNames, ProgramRenderable, MatchingProgramParams } from "./cal
 
 import { Program } from "./program";
 
-export interface MyComponentProps {
+export interface DPAToolProps {
 
   initialTargetHomePrice: number | null,
   initialHouseholdSize: number | null,
@@ -55,7 +55,7 @@ async function fetchPrograms({
   return response
 }
 
-export const MyComponent: Component<MyComponentProps> = ({
+export const DPATool: Component<DPAToolProps> = ({
 
   initialTargetHomePrice,
   initialHouseholdSize,
