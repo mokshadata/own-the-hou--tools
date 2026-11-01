@@ -106,8 +106,8 @@ export const DPATool: Component<DPAToolProps> = ({
   const [householdIncome, setHouseholdIncome] = createSignal(initialHouseholdIncome);
   const [houseListingPrice, setHouseListingPrice] = createSignal(initialTargetHomePrice);
 
-  const [latitude, setLatitude] = createSignal(initialCoordinates && initialCoordinates.length && initialCoordinates[0] || undefined);
-  const [longitude, setLongitude] = createSignal(initialCoordinates && initialCoordinates.length && initialCoordinates[1] || undefined);
+  const [longitude, setLongitude] = createSignal(initialCoordinates && initialCoordinates.length && initialCoordinates[0] || undefined);
+  const [latitude, setLatitude] = createSignal(initialCoordinates && initialCoordinates.length && initialCoordinates[1] || undefined);
 
   const coordinates = () => (longitude() && latitude() && [longitude(), latitude()] || null);
 
