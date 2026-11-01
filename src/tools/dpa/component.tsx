@@ -6,27 +6,25 @@ import { getHTMLFromMarkdown } from "../../utilities/";
 
 import type { boundNames, ProgramRenderable, MatchingProgramParams } from "./calculate";
 
-import { Program } from "./program";
+import { Program, ProgramBadge } from "./program";
 
-export interface DPAToolProps {
+export interface DPAProgramListProps {
 
   initialTargetHomePrice: number | null,
   initialHouseholdSize: number | null,
   initialHouseholdIncome: number | null,
 
-  initialAddress: string | null,
   initialCoordinates: number[] | null,
-  initialBounds: string[] | null,
+}
 
+export interface DPAToolProps extends DPAProgramListProps {
   allowInputTargetDownPaymentPercent: boolean,
 
   allowInputTargetHomePrice: boolean,
   allowInputHouseholdSize: boolean,
   allowInputHouseholdIncome: boolean,
 
-  allowInputAddress: boolean,
   allowInputCoordinates: boolean,
-  allowInputBounds: boolean,
 }
 
 async function fetchPrograms({
@@ -55,25 +53,13 @@ async function fetchPrograms({
   return response
 }
 
-export const DPATool: Component<DPAToolProps> = ({
+export const DPAProgramsList: Component<DPAProgramListProps> = ({
 
   initialTargetHomePrice,
   initialHouseholdSize,
   initialHouseholdIncome,
-  initialAddress,
   initialCoordinates,
 
-  initialBounds = ['Texas', 'City of Houston', 'Harris County unincorporated'],
-
-  allowInputTargetDownPaymentPercent = true,
-
-  allowInputTargetHomePrice = true,
-  allowInputHouseholdSize = true,
-  allowInputHouseholdIncome = true,
-
-  allowInputAddress = false,
-  allowInputCoordinates = true,
-  allowInputBounds = false,
 }, node) => {
   
   onSettled(() => {
@@ -130,7 +116,86 @@ export const DPATool: Component<DPAToolProps> = ({
     }
   ));
   
-  return (<div>
+  return (<>
+    <For each={programs()}>{ (program) => (
+      <ProgramBadge
+        program={program}
+      />
+    )}</For>
+  </>)
+}
+
+export const DPATool: Component<DPAToolProps> = ({
+
+  initialTargetHomePrice,
+  initialHouseholdSize,
+  initialHouseholdIncome,
+  initialCoordinates,
+
+  allowInputTargetDownPaymentPercent = true,
+
+  allowInputTargetHomePrice = true,
+  allowInputHouseholdSize = true,
+  allowInputHouseholdIncome = true,
+
+  allowInputCoordinates = true,
+}, node) => {
+  
+  onSettled(() => {
+
+    if (!node) { return }
+    const shadowRoot = node.element.shadowRoot;
+    let parentStyles = new CSSStyleSheet();
+    parentStyles.replaceSync(`
+      ${
+        [...shadowRoot.ownerDocument.styleSheets]
+          .reduce((result, sheet) => (
+            [...result, ...[...sheet.cssRules].map((rule) => (rule.cssText))]
+          ), [])
+          .join('')
+      }
+    `)
+
+    if (shadowRoot && parentStyles) {
+      shadowRoot.adoptedStyleSheets = [
+        ...shadowRoot.adoptedStyleSheets,
+        parentStyles,
+      ]
+    }
+  })
+
+  const [downPaymentPercentUpper, setDownPaymentPercentUpper] = createSignal(0.05);
+  const [downPaymentPercentLower, setDownPaymentPercentLower] = createSignal(0.035);
+
+  const [householdSize, setHouseholdSize] = createSignal(initialHouseholdSize);
+  const [householdIncome, setHouseholdIncome] = createSignal(initialHouseholdIncome);
+  const [houseListingPrice, setHouseListingPrice] = createSignal(initialTargetHomePrice);
+
+  const [longitude, setLongitude] = createSignal(initialCoordinates && initialCoordinates.length && initialCoordinates[0] || undefined);
+  const [latitude, setLatitude] = createSignal(initialCoordinates && initialCoordinates.length && initialCoordinates[1] || undefined);
+
+  const coordinates = () => (longitude() && latitude() && [longitude(), latitude()] || null);
+
+  const geoLimits = () => (coordinates() && getMatchingProgramsGeo(coordinates()) || [])
+
+  const downPaymentUpper = () => (houseListingPrice() && houseListingPrice() * downPaymentPercentUpper())
+  const downPaymentLower = () => (houseListingPrice() && houseListingPrice() * downPaymentPercentLower())
+
+  const programs = createMemo(() => fetchPrograms(
+    // {}
+    {
+      householdSize: householdSize(),
+      annualIncome: householdIncome(),
+      coordinates: coordinates(), // [-95.374543, 29.850715],
+      // coordinates: [-95.484657, 29.930173],
+      // geoLimits: ['Texas', 'Harris County unincorporated'],
+      houseListingPrice: houseListingPrice(),
+      downPaymentPercentLower: downPaymentPercentLower(),
+      downPaymentPercentUpper: downPaymentPercentUpper(),
+    }
+  ));
+  
+  return (<>
     {(allowInputCoordinates || allowInputHouseholdIncome || allowInputHouseholdSize || allowInputTargetHomePrice) && <form>
       {allowInputTargetDownPaymentPercent && <div class="mb-3">
         <label for="down-payment-percentage-target" class="form-label">Target Down Payment Percent</label>
@@ -195,5 +260,5 @@ export const DPATool: Component<DPAToolProps> = ({
         downPaymentPercentLower={downPaymentPercentLower}
       />
     )}</For>
-  </div>)
+  </>)
 }

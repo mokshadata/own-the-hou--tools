@@ -2,6 +2,26 @@
 import type { boundNames, ProgramRenderable, MatchingProgramParams } from "./calculate";
 import { formatCurrency, formatPercent } from "../../utilities";
 
+export function ProgramBadge({
+  program,
+}:{
+  program: ProgramRenderable,
+}) {
+
+  return (<span
+      data-program-state={program.state}
+      class={`badge mb-4 border rounded-pill
+          ${(program.state === 'eligible-full') && 'border-primary text-primary' || ''}
+          ${(program.state === 'eligible-partial' || program.state === 'needs-information') && 'border-info text-info opacity-75' || ''}
+          ${(program.state === 'inactive' || program.state === 'ineligible') && 'border-info text-info opacity-25' || ''}
+      `}
+      data-is-active={program.isActive && "on" || "off"}
+      data-meets-limit-household={(program.meetsHouseholdLimits && "met") || (program.meetsHouseholdLimits === null && "not-set") || "not-met"}
+      data-meets-limit-geo={(program.meetsGeoLimits && "met") || (program.meetsGeoLimits === null && "not-set") || "not-met"}
+    >
+      {program.program}
+    </span>)
+}
 
 export function Program({
   program,
@@ -25,7 +45,7 @@ export function Program({
       data-program-state={program.state}
       class={`card mb-4 border border-2
           ${(program.state === 'eligible-full') && 'border-primary' || ''}
-          ${(program.state === 'eligible-partial') && 'border-primary-subtle opacity-75' || ''}
+          ${(program.state === 'eligible-partial' || program.state === 'needs-information') && 'border-primary-subtle opacity-75' || ''}
           ${(program.state === 'inactive' || program.state === 'ineligible') && 'opacity-25' || ''}
       `}
       data-is-active={program.isActive && "on" || "off"}

@@ -1,1 +1,1 @@
-export { DPATool } from './component'
+export { DPATool, DPAProgramsList } from './component'
