@@ -1,19 +1,10 @@
 import type { Component } from "solid-js";
-import { createMemo, For, onSettled, createEffect } from "solid-js";
+import { createMemo, For, onSettled, createSignal } from "solid-js";
 
 import { getMatchingPrograms, getMatchingProgramsGeo } from "./calculate";
 import { getHTMLFromMarkdown } from "../../utilities/";
 
 import type { boundNames, ProgramRenderable, MatchingProgramParams } from "./calculate";
-
-import {
-  householdSize, setHouseholdSize,
-  householdIncome, setHouseholdIncome,
-  houseListingPrice, setHouseListingPrice,
-  longitude, setLongitude, latitude, setLatitude, coordinates,
-  geoLimits,
-  downPaymentPercentUpper, setDownPaymentPercentUpper,
-} from "./store";
 
 import { Program } from "./program";
 
@@ -44,9 +35,19 @@ async function fetchPrograms({
   geoLimits,
   coordinates,
   houseListingPrice,
+  downPaymentPercentLower,
+  downPaymentPercentUpper,
 }: MatchingProgramParams): Promise<ProgramRenderable[]> {
 
-  const response = await (Promise.all(getMatchingPrograms({ householdSize, annualIncome, geoLimits, coordinates, houseListingPrice }).map(async (program) => ({
+  const response = await (Promise.all(getMatchingPrograms({
+    householdSize,
+    annualIncome,
+    geoLimits,
+    coordinates,
+    houseListingPrice,
+    downPaymentPercentLower,
+    downPaymentPercentUpper,
+  }).map(async (program) => ({
     ...program,
     about: await getHTMLFromMarkdown(program.description),
   }))))
@@ -76,22 +77,6 @@ export const MyComponent: Component<MyComponentProps> = ({
 }, node) => {
   
   onSettled(() => {
-    if (initialHouseholdIncome) {
-      setHouseholdIncome(initialHouseholdIncome)
-    }
-  
-    if (initialHouseholdSize) {
-      setHouseholdSize(initialHouseholdSize)
-    }
-  
-    if (initialTargetHomePrice) {
-      setHouseListingPrice(initialTargetHomePrice)
-    }
-  
-    if (initialCoordinates) {
-      setLongitude(initialCoordinates[0])
-      setLatitude(initialCoordinates[1])
-    }
 
     if (!node) { return }
     const shadowRoot = node.element.shadowRoot;
@@ -114,6 +99,23 @@ export const MyComponent: Component<MyComponentProps> = ({
     }
   })
 
+  const [downPaymentPercentUpper, setDownPaymentPercentUpper] = createSignal(0.05);
+  const [downPaymentPercentLower, setDownPaymentPercentLower] = createSignal(0.035);
+
+  const [householdSize, setHouseholdSize] = createSignal(initialHouseholdSize);
+  const [householdIncome, setHouseholdIncome] = createSignal(initialHouseholdIncome);
+  const [houseListingPrice, setHouseListingPrice] = createSignal(initialTargetHomePrice);
+
+  const [latitude, setLatitude] = createSignal(initialCoordinates && initialCoordinates.length && initialCoordinates[0] || undefined);
+  const [longitude, setLongitude] = createSignal(initialCoordinates && initialCoordinates.length && initialCoordinates[1] || undefined);
+
+  const coordinates = () => (longitude() && latitude() && [longitude(), latitude()] || null);
+
+  const geoLimits = () => (coordinates() && getMatchingProgramsGeo(coordinates()) || [])
+
+  const downPaymentUpper = () => (houseListingPrice() && houseListingPrice() * downPaymentPercentUpper())
+  const downPaymentLower = () => (houseListingPrice() && houseListingPrice() * downPaymentPercentLower())
+
   const programs = createMemo(() => fetchPrograms(
     // {}
     {
@@ -123,6 +125,8 @@ export const MyComponent: Component<MyComponentProps> = ({
       // coordinates: [-95.484657, 29.930173],
       // geoLimits: ['Texas', 'Harris County unincorporated'],
       houseListingPrice: houseListingPrice(),
+      downPaymentPercentLower: downPaymentPercentLower(),
+      downPaymentPercentUpper: downPaymentPercentUpper(),
     }
   ));
   
@@ -184,7 +188,12 @@ export const MyComponent: Component<MyComponentProps> = ({
     </form>}
 
     <For each={programs()}>{ (program) => (
-      <Program program={program}/>
+      <Program
+        program={program}
+        houseListingPrice={houseListingPrice}
+        downPaymentPercentUpper={downPaymentPercentUpper}
+        downPaymentPercentLower={downPaymentPercentLower}
+      />
     )}</For>
   </div>)
 }

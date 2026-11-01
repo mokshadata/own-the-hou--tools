@@ -7,7 +7,7 @@ import { formatCurrency } from "../../utilities";
 
 import programBoundsGeoJSON from "./program-bounds.geojson";
 
-import { downPaymentPercentUpper, downPaymentPercentLower } from "./store";
+// import { downPaymentPercentUpper, downPaymentPercentLower } from "./store";
 // import { coordinates } from "./store";
 
 export type boundNames = 'Texas' | 'City of Houston' | 'Harris County unincorporated';
@@ -40,9 +40,7 @@ export interface ProgramAvailable extends Program {
   meetsHouseholdLimits: boolean | null,
   meetsGeoLimits: boolean | null,
   limits: Limit[],
-  availableDPA: number | null,
-  buyerDownLower: number | null,
-  buyerDownUpper: number | null,
+  availableDPA: number,
   state: 'eligible-full' | 'eligible-partial' | 'ineligible' | 'inactive' | 'needs-information',
   stateRank: 1 | 2 | 3 | 4 | 5 | 6,
   order: number,
@@ -213,7 +211,7 @@ If you have questions or want to talk to someone with the Harris County Communit
     isActive: true,
     calcAvailableAmount: (info) => (0.05 * info.houseListingPrice),
     descriptionTemplate: (info) => (`
-The State of Texas offers up to 5% of the purchase price of your home${info.houseListingPrice && ` (<span class="border-bottom border-1 border-black fst-italic">${formatCurrency(downPaymentPercentUpper() * info.houseListingPrice)}</span>)` || ''}.
+The State of Texas offers up to 5% of the purchase price of your home${info.houseListingPrice && ` (<span class="border-bottom border-1 border-black fst-italic">${formatCurrency(0.05 * info.houseListingPrice)}</span>)` || ''}.
 
 For more information, please visit:  [thetexashomebuyerprogram.com](https://thetexashomebuyerprogram.com/)
 
@@ -228,7 +226,7 @@ If you have questions or want to talk to someone with the Texas Department of Ho
     isActive: true,
     calcAvailableAmount: (info) => (0.05 * info.houseListingPrice),
     descriptionTemplate: (info) => (`
-The Texas State Affordable Housing Corporation offers up to 5% of the purchase price of your home${info.houseListingPrice && ` (<span class="border-bottom border-1 border-black fst-italic">${formatCurrency(downPaymentPercentUpper() * info.houseListingPrice)}</span>)` || ''}.
+The Texas State Affordable Housing Corporation offers up to 5% of the purchase price of your home${info.houseListingPrice && ` (<span class="border-bottom border-1 border-black fst-italic">${formatCurrency(0.05 * info.houseListingPrice)}</span>)` || ''}.
 
 For more information, please visit: [tsahc.org/home-buyer-programs](https://www.tsahc.org/home-buyer-programs)
 
@@ -301,18 +299,6 @@ export function getMatchingPrograms({
       availableDPA: !(program.meetsHouseholdLimits === false || program.meetsGeoLimits === false || program.isActive === false) && program.calcAvailableAmount({
         houseListingPrice,
       }) || 0,
-    }))
-    .map((program) => ({
-      ...program,
-
-      buyerDownUpper: (houseListingPrice && houseListingPrice * downPaymentPercentUpper() - program.availableDPA) || null,
-      buyerDownLower: (houseListingPrice && houseListingPrice * downPaymentPercentLower() - program.availableDPA) || null,
-    }))
-    .map((program) => ({
-      ...program,
-
-      buyerDownUpper: program.buyerDownUpper > 0 && program.buyerDownUpper || 0,
-      buyerDownLower: program.buyerDownLower > 0 && program.buyerDownLower || 0,
     }))
     .map((program) => ({
       ...program,
@@ -395,6 +381,6 @@ export function getPossibleLimits(householdSize: number | undefined):Limit[] {
   ]
 }
 
-export function calcDownPaymentDiscount(homePrice: number):number {
-  return homePrice * downPaymentPercentUpper()
-}
+// export function calcDownPaymentDiscount(homePrice: number):number {
+//   return homePrice * downPaymentPercentUpper()
+// }

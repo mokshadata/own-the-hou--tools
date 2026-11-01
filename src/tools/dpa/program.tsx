@@ -1,11 +1,25 @@
 
 import type { boundNames, ProgramRenderable, MatchingProgramParams } from "./calculate";
-import { houseListingPrice, downPaymentLower, downPaymentUpper, downPaymentPercentLower, downPaymentPercentUpper } from "./store";
-
 import { formatCurrency, formatPercent } from "../../utilities";
 
 
-export function Program({ program }:{ program: ProgramRenderable }) {
+export function Program({
+  program,
+  houseListingPrice,
+  downPaymentPercentLower,
+  downPaymentPercentUpper,
+}:{
+  program: ProgramRenderable,
+  houseListingPrice: Function,
+  downPaymentPercentLower: Function,
+  downPaymentPercentUpper: Function,
+}) {
+
+  const downPaymentLower = () => ((houseListingPrice() || 0) * downPaymentPercentLower())
+  const downPaymentUpper = () => ((houseListingPrice() || 0) * downPaymentPercentUpper())
+
+  const buyerDownUpper = () => (Math.max(0, downPaymentUpper() - program.availableDPA))
+  const buyerDownLower = () => (Math.max(0, downPaymentLower() - program.availableDPA))
 
   return (<section
       data-program-state={program.state}
@@ -60,8 +74,8 @@ export function Program({ program }:{ program: ProgramRenderable }) {
           <p>
             With this program, you could qualify for up to <span class="border-bottom border-1 border-black fst-italic">{formatCurrency(program.availableDPA)}</span> in Down Payment Assistance.
           </p>
-          {houseListingPrice() && program.buyerDownUpper < 1000 && <p>For a house listing price of <span class="border-bottom border-1 border-black fst-italic">{formatCurrency(houseListingPrice())}</span>, your target down payment is <span class="border-bottom border-1 border-black fst-italic">{formatCurrency(downPaymentUpper())}</span> ({formatPercent(downPaymentPercentUpper())} of listing price). This Down Payment Assistance program would cover most of your target down payment cost.</p>}
-          {houseListingPrice() && program.buyerDownUpper >= 1000 && <p>For a house listing price of <span class="border-bottom border-1 border-black fst-italic">{formatCurrency(houseListingPrice())}</span>, your target down payment is <span class="border-bottom border-1 border-black fst-italic">{formatCurrency(downPaymentUpper())}</span> ({formatPercent(downPaymentPercentUpper())} of listing price). With this program, you would need to provide {formatCurrency(program.buyerDownUpper)} to cover your target down payment.</p>}
+          {houseListingPrice() && buyerDownUpper() < 1000 && <p>For a house listing price of <span class="border-bottom border-1 border-black fst-italic">{formatCurrency(houseListingPrice())}</span>, your target down payment is <span class="border-bottom border-1 border-black fst-italic">{formatCurrency(downPaymentUpper())}</span> ({formatPercent(downPaymentPercentUpper())} of listing price). This Down Payment Assistance program would cover most of your target down payment cost.</p>}
+          {houseListingPrice() && buyerDownUpper() >= 1000 && <p>For a house listing price of <span class="border-bottom border-1 border-black fst-italic">{formatCurrency(houseListingPrice())}</span>, your target down payment is <span class="border-bottom border-1 border-black fst-italic">{formatCurrency(downPaymentUpper())}</span> ({formatPercent(downPaymentPercentUpper())} of listing price). With this program, you would need to provide {formatCurrency(buyerDownUpper())} to cover your target down payment.</p>}
         </div>}
       </div>
     </section>)
