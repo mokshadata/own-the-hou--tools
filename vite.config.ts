@@ -4,6 +4,7 @@ import solid from '@solidjs/vite-plugin';
 import dts from 'vite-plugin-dts';
 
 import path from 'node:path';
+import fs from 'node:fs';
 
 
 export default defineConfig({
@@ -14,8 +15,8 @@ export default defineConfig({
     // `extensions` makes @solidjs/vite-plugin also compile the `?pick=` route
     // modules the fileRoutes plugin emits (their ids end in a query string).
     // solid({ start: true, extensions: ['.jsx', '.tsx'], diagnostics: true }), // add `ssr: true` for streaming SSR
-    solid({ start: false, extensions: ['.jsx', '.tsx'], diagnostics: true }), // add `ssr: true` for streaming SSR
-    // fileRoutes({ types: true }),
+    solid({ start: true, extensions: ['.jsx', '.tsx'], diagnostics: true }), // add `ssr: true` for streaming SSR
+    fileRoutes({ types: true }),
     {
       name: 'geojson-loader',
       transform(code, id) {
@@ -29,6 +30,25 @@ export default defineConfig({
       }
     },
     dts({ insertTypesEntry: true }),
+    {
+      name: 'vite-plugin-raw-base64',
+      transform(_, id) {
+        // Intercept imports ending with ?base64
+        if (id.endsWith('?base64')) {
+          const filePath = id.replace('?base64', '');
+          const fileBuffer = fs.readFileSync(filePath);
+          
+          // Determine the correct mime type
+          const ext = filePath.split('.').pop();
+          const mimeType = ext === 'svg' ? 'image/svg+xml' : `image/${ext}`;
+          
+          const base64 = fileBuffer.toString('base64');
+          const dataUrl = `data:${mimeType};base64,${base64}`;
+          
+          return `export default ${JSON.stringify(dataUrl)}`;
+        }
+      }
+    }
   ],
   server: {
     port: 3000,

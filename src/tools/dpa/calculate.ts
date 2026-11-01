@@ -1,6 +1,12 @@
 import type { VFile } from "vfile";
 import { booleanContains } from "@turf/turf";
 
+ import cohLogoDataURL from '../../images/coh-hcdd.png?base64';
+ import hcltLogoDataURL from '../../images/hclt.png?base64';
+ import harrisCountyLogoDataURL from '../../images/countycsddlogo.jpg?base64';
+ import texasHomebuyersLogoDataURL from '../../images/texas-homebuyers.png?base64';
+ import tsahcLogoDataURL from '../../images/tsahc.png?base64';
+
 import type { GeoJSON, Point, Position } from "geojson";
 
 import { formatCurrency } from "../../utilities";
@@ -158,7 +164,7 @@ export const limitsList: Limit[] = [
 export const programs: ProgramBase[] = [
   {
     program: 'City of Houston Homebuyer Assistance',
-    programLogo: '/images/coh-hcdd.png',
+    programLogo: cohLogoDataURL,
     isActive: true,
     calcAvailableAmount: (info) => (50000),
     descriptionTemplate: (info) => (`
@@ -175,7 +181,7 @@ If you have questions or want to talk to someone with the City of Houston Housin
   },
   {
     program: 'Houston Community Land Trust',
-    programLogo: '/images/hclt.png',
+    programLogo: hcltLogoDataURL,
     isActive: false,
     calcAvailableAmount: (info) => (150000),
     descriptionTemplate: (info) => (`
@@ -192,7 +198,7 @@ If you have questions or want to talk to someone with the Houston Community Land
   },
   {
     program: 'Harris County Down Payment Assistance Program',
-    programLogo: '/images/countycsddlogo.jpg',
+    programLogo: harrisCountyLogoDataURL,
     isActive: true,
     calcAvailableAmount: (info) => (40000),
     descriptionTemplate: (info) => (`
@@ -207,7 +213,7 @@ If you have questions or want to talk to someone with the Harris County Communit
   },
   {
     program: 'The Texas Homebuyer Program',
-    programLogo: '/images/texas-homebuyers.png',
+    programLogo: texasHomebuyersLogoDataURL,
     isActive: true,
     calcAvailableAmount: (info) => (0.05 * info.houseListingPrice),
     descriptionTemplate: (info) => (`
@@ -222,7 +228,7 @@ If you have questions or want to talk to someone with the Texas Department of Ho
   },
   {
     program: 'Texas State Affordable Housing Corporation',
-    programLogo: '/images/tsahc.png',
+    programLogo: tsahcLogoDataURL,
     isActive: true,
     calcAvailableAmount: (info) => (0.05 * info.houseListingPrice),
     descriptionTemplate: (info) => (`
