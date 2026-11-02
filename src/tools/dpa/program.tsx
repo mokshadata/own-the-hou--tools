@@ -132,6 +132,19 @@ export function ProgramSummary({
       <strong>
         {program.program}
       </strong>
+      <span
+        data-program-state={program.state}
+        class={`ms-2 badge badge-outline rounded-pill 
+            ${(program.state === 'eligible-full') && 'theme-primary' || ''}
+            ${(program.state === 'eligible-partial' || program.state === 'needs-information') && 'theme-info opacity-75' || ''}
+            ${(program.state === 'inactive' || program.state === 'ineligible') && 'theme-info opacity-25' || ''}
+        `}
+        data-is-active={program.isActive && "on" || "off"}
+        data-meets-limit-household={(program.meetsHouseholdLimits && "met") || (program.meetsHouseholdLimits === null && "not-set") || "not-met"}
+        data-meets-limit-geo={(program.meetsGeoLimits && "met") || (program.meetsGeoLimits === null && "not-set") || "not-met"}
+      >
+        {formatCurrency(program.availableDPA)}
+      </span>
       <svg class="accordion-icon" xmlns="http://www.w3.org/2000/svg" width="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m2 5 6 6 6-6"/></svg>
     </summary>
     <div class="accordion-body">

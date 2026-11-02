@@ -108,6 +108,70 @@ export const DPAProgramsList: Component<DPAProgramListProps> = ({
   </>)
 }
 
+export const DPAProgramsListSummary: Component<DPAProgramListProps> = ({
+
+  initialTargetHomePrice,
+  initialHouseholdSize,
+  initialHouseholdIncome,
+  initialCoordinates,
+
+}, node) => {
+  
+  onSettled(() => {
+
+    if (!node) { return }
+    const shadowRoot = node.element.shadowRoot;
+    let parentStyles = new CSSStyleSheet();
+    parentStyles.replaceSync(`
+      ${
+        [...shadowRoot.ownerDocument.styleSheets]
+          .reduce((result, sheet) => (
+            [...result, ...[...sheet.cssRules].map((rule) => (rule.cssText))]
+          ), [])
+          .join('')
+      }
+    `)
+
+    if (shadowRoot && parentStyles) {
+      shadowRoot.adoptedStyleSheets = [
+        ...shadowRoot.adoptedStyleSheets,
+        parentStyles,
+      ]
+    }
+  })
+
+  const [downPaymentPercentUpper, setDownPaymentPercentUpper] = createSignal(0.05);
+  const [downPaymentPercentLower, setDownPaymentPercentLower] = createSignal(0.035);
+
+  const [householdSize, setHouseholdSize] = createSignal(initialHouseholdSize);
+  const [householdIncome, setHouseholdIncome] = createSignal(initialHouseholdIncome);
+  const [houseListingPrice, setHouseListingPrice] = createSignal(initialTargetHomePrice);
+
+  const [longitude, setLongitude] = createSignal(initialCoordinates && initialCoordinates.length && initialCoordinates[0] || undefined);
+  const [latitude, setLatitude] = createSignal(initialCoordinates && initialCoordinates.length && initialCoordinates[1] || undefined);
+
+  const coordinates = () => (longitude() && latitude() && [longitude(), latitude()] || null);
+
+  const programs = () => getMatchingPrograms({
+    householdSize: householdSize(),
+    annualIncome: householdIncome(),
+    coordinates: coordinates(), // [-95.374543, 29.850715],
+    // coordinates: [-95.484657, 29.930173],
+    houseListingPrice: houseListingPrice(),
+  });
+  
+  return (<div class="accordion accordion-sm theme-primary">
+    <For each={programs()}>{ (program) => (
+      <ProgramSummary
+        program={program}
+        houseListingPrice={houseListingPrice}
+        downPaymentPercentUpper={downPaymentPercentUpper}
+        downPaymentPercentLower={downPaymentPercentLower}
+      />
+    )}</For>
+  </div>)
+}
+
 export const DPATool: Component<DPAToolProps> = ({
 
   initialTargetHomePrice,
@@ -222,15 +286,13 @@ export const DPATool: Component<DPAToolProps> = ({
       </div>
     </div>)}
   </form>}
-  <div class="accordion theme-primary">
-    <For each={programs()}>{ (program) => (
-      <Program
-        program={program}
-        houseListingPrice={houseListingPrice}
-        downPaymentPercentUpper={downPaymentPercentUpper}
-        downPaymentPercentLower={downPaymentPercentLower}
-      />
-    )}</For>
-  </div>
+  <For each={programs()}>{ (program) => (
+    <Program
+      program={program}
+      houseListingPrice={houseListingPrice}
+      downPaymentPercentUpper={downPaymentPercentUpper}
+      downPaymentPercentLower={downPaymentPercentLower}
+    />
+  )}</For>
   </>)
 }
