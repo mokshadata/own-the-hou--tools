@@ -10,7 +10,7 @@ export function ProgramBadge({
 
   return (<span
       data-program-state={program.state}
-      class={`badge badge-outline me-2 rounded-pill
+      class={`badge badge-outline rounded-pill
           ${(program.state === 'eligible-full') && 'theme-primary' || ''}
           ${(program.state === 'eligible-partial' || program.state === 'needs-information') && 'theme-info opacity-75' || ''}
           ${(program.state === 'inactive' || program.state === 'ineligible') && 'theme-info opacity-25' || ''}
