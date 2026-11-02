@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "description": "",
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/ownthehoutools--dpa--solid.es.js",
   "module": "./dist/ownthehoutools--dpa--solid.es.js",
   "types": "./dist/ownthehoutools--dpa--solid.d.ts",
@@ -45,7 +47,7 @@
     "@solidjs/router": "^2.0.0-next.38",
     "@solidjs/web": "^2.0.0-rc.14",
     "@turf/turf": "^7.4.0",
-    "bootstrap": "^5.3.3",
+    "bootstrap": "^6.0.0-alpha.1",
     "solid-js": "^2.0.0-rc.14"
   }
 }

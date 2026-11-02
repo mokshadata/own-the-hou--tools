@@ -26,6 +26,7 @@ export interface Limit {
 export interface ProgramBase {
   program: string,
   programLogo: string,
+  slug: string,
   isActive: boolean,
   calcAvailableAmount: Function,
   upperLimit: LimitName,
@@ -157,6 +158,7 @@ export const programs: ProgramBase[] = [
   {
     program: 'City of Houston Homebuyer Assistance',
     programLogo: cohLogoDataURL,
+    slug: 'coh-homebuyer-assistance',
     isActive: true,
     calcAvailableAmount: (info) => (50000),
     upperLimit: 'AMI 80',
@@ -165,6 +167,7 @@ export const programs: ProgramBase[] = [
   {
     program: 'Houston Community Land Trust',
     programLogo: hcltLogoDataURL,
+    slug: 'hclt',
     isActive: false,
     calcAvailableAmount: (info) => (150000),
     upperLimit: 'AMI 80',
@@ -173,6 +176,7 @@ export const programs: ProgramBase[] = [
   {
     program: 'Harris County Down Payment Assistance Program',
     programLogo: harrisCountyLogoDataURL,
+    slug: 'harris-county-dpa',
     isActive: true,
     calcAvailableAmount: (info) => (40000),
     upperLimit: 'AMI 120',
@@ -181,6 +185,7 @@ export const programs: ProgramBase[] = [
   {
     program: 'The Texas Homebuyer Program',
     programLogo: texasHomebuyersLogoDataURL,
+    slug: 'texas-homebuyer-program',
     isActive: true,
     calcAvailableAmount: (info) => (0.05 * info.houseListingPrice),
     upperLimit: 'AMI 120',
@@ -189,6 +194,7 @@ export const programs: ProgramBase[] = [
   {
     program: 'Texas State Affordable Housing Corporation',
     programLogo: tsahcLogoDataURL,
+    slug: 'tsahc',
     isActive: true,
     calcAvailableAmount: (info) => (0.05 * info.houseListingPrice),
     upperLimit: 'TSAHC Limit',

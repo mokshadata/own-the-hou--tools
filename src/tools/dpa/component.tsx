@@ -6,7 +6,7 @@ import { getHTMLFromMarkdown } from "../../utilities/";
 
 import type { MatchingProgramParams } from "./calculate";
 
-import { Program, ProgramBadge } from "./program";
+import { Program, ProgramBadge, ProgramSummary } from "./program";
 
 export interface DPAProgramListProps {
 
@@ -222,7 +222,7 @@ export const DPATool: Component<DPAToolProps> = ({
       </div>
     </div>)}
   </form>}
-
+  <div class="accordion theme-primary">
     <For each={programs()}>{ (program) => (
       <Program
         program={program}
@@ -231,5 +231,6 @@ export const DPATool: Component<DPAToolProps> = ({
         downPaymentPercentLower={downPaymentPercentLower}
       />
     )}</For>
+  </div>
   </>)
 }

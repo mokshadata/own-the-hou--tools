@@ -10,10 +10,10 @@ export function ProgramBadge({
 
   return (<span
       data-program-state={program.state}
-      class={`badge me-2 border rounded-pill
-          ${(program.state === 'eligible-full') && 'border-primary text-primary' || ''}
-          ${(program.state === 'eligible-partial' || program.state === 'needs-information') && 'border-info text-info opacity-75' || ''}
-          ${(program.state === 'inactive' || program.state === 'ineligible') && 'border-info text-info opacity-25' || ''}
+      class={`badge badge-outline me-2 rounded-pill
+          ${(program.state === 'eligible-full') && 'theme-primary' || ''}
+          ${(program.state === 'eligible-partial' || program.state === 'needs-information') && 'theme-info opacity-75' || ''}
+          ${(program.state === 'inactive' || program.state === 'ineligible') && 'theme-info opacity-25' || ''}
       `}
       data-is-active={program.isActive && "on" || "off"}
       data-meets-limit-household={(program.meetsHouseholdLimits && "met") || (program.meetsHouseholdLimits === null && "not-set") || "not-met"}
@@ -43,7 +43,7 @@ export function Program({
 
   return (<section
       data-program-state={program.state}
-      class={`card mb-4 border border-2
+      class={`card card-translucent mb-4 border border-2
           ${(program.state === 'eligible-full') && 'border-primary' || ''}
           ${(program.state === 'eligible-partial' || program.state === 'needs-information') && 'border-primary-subtle opacity-75' || ''}
           ${(program.state === 'inactive' || program.state === 'ineligible') && 'opacity-25' || ''}
@@ -52,7 +52,7 @@ export function Program({
       data-meets-limit-household={(program.meetsHouseholdLimits && "met") || (program.meetsHouseholdLimits === null && "not-set") || "not-met"}
       data-meets-limit-geo={(program.meetsGeoLimits && "met") || (program.meetsGeoLimits === null && "not-set") || "not-met"}
     >
-      <div class="card-header" data-details="header">
+      <div class="card-header fg-primary" data-details="header">
         <h2 class="d-flex flex-row align-items-center gap-2 card-title">
           <span>
             <img src={program.programLogo} style="width: 200px;"/>
@@ -103,7 +103,45 @@ export function Program({
     </section>)
 }
 
-export function AboutProgram({ program,...props}: { program: string, }) {
+export function ProgramSummary({
+  program,
+  houseListingPrice,
+  downPaymentPercentLower,
+  downPaymentPercentUpper,
+}:{
+  program: ProgramRenderable,
+  houseListingPrice: Function,
+  downPaymentPercentLower: Function,
+  downPaymentPercentUpper: Function,
+}) {
+
+  if (program.state === 'inactive' || program.state === 'ineligible') {
+    return <></>
+  }
+
+  return (<details
+      name={`${program.slug}-details`}
+      data-program-state={program.state}
+      class={`accordion-item
+          ${(program.state === 'eligible-partial' || program.state === 'needs-information') && 'opacity-75' || ''}
+      `}
+      data-is-active={program.isActive && "on" || "off"}
+      data-meets-limit-household={(program.meetsHouseholdLimits && "met") || (program.meetsHouseholdLimits === null && "not-set") || "not-met"}
+      data-meets-limit-geo={(program.meetsGeoLimits && "met") || (program.meetsGeoLimits === null && "not-set") || "not-met"}>
+    <summary class="accordion-header">
+      <strong>
+        {program.program}
+      </strong>
+      <svg class="accordion-icon" xmlns="http://www.w3.org/2000/svg" width="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m2 5 6 6 6-6"/></svg>
+    </summary>
+    <div class="accordion-body">
+      <AboutProgram program={program.program} houseListingPrice={houseListingPrice}/>
+    </div>
+  </details>)
+
+}
+
+export function AboutProgram({ program, ...props}: { program: string, }) {
     const About = {
       'City of Houston Homebuyer Assistance': AboutCoHHomebuyerAssistance,
       'Houston Community Land Trust': AboutHCLT,
