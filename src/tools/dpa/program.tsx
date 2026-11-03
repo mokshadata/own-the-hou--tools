@@ -122,13 +122,13 @@ export function ProgramSummary({
   return (<details
       name={`${program.slug}-details`}
       data-program-state={program.state}
-      class={`accordion-item
-          ${(program.state === 'eligible-partial' || program.state === 'needs-information') && 'opacity-75' || ''}
+      class={`accordion-item border-1 border-solid border-primary
+          ${(program.state === 'eligible-partial' || program.state === 'needs-information') && 'opacity-100' || ''}
       `}
       data-is-active={program.isActive && "on" || "off"}
       data-meets-limit-household={(program.meetsHouseholdLimits && "met") || (program.meetsHouseholdLimits === null && "not-set") || "not-met"}
       data-meets-limit-geo={(program.meetsGeoLimits && "met") || (program.meetsGeoLimits === null && "not-set") || "not-met"}>
-    <summary class="accordion-header">
+    <summary class="accordion-header py-1">
       <strong>
         {program.program}
       </strong>
