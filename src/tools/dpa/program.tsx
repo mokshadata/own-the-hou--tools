@@ -122,7 +122,7 @@ export function ProgramSummary({
   return (<details
       name={`${program.slug}-details`}
       data-program-state={program.state}
-      class={`accordion-item border-1 border-solid border-primary
+      class={`accordion-item border-1 border-solid border-gray rounded-0
           ${(program.state === 'eligible-partial' || program.state === 'needs-information') && 'opacity-100' || ''}
       `}
       data-is-active={program.isActive && "on" || "off"}
