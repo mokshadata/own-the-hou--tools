@@ -10,7 +10,7 @@ export function ProgramBadge({
 
   return (<span
       data-program-state={program.state}
-      class={`badge badge-outline rounded-pill
+      class={`badge rounded-pill
           ${(program.state === 'eligible-full') && 'theme-primary' || ''}
           ${(program.state === 'eligible-partial' || program.state === 'needs-information') && 'theme-info opacity-75' || ''}
           ${(program.state === 'inactive' || program.state === 'ineligible') && 'theme-info opacity-25' || ''}
@@ -129,9 +129,9 @@ export function ProgramSummary({
       data-meets-limit-household={(program.meetsHouseholdLimits && "met") || (program.meetsHouseholdLimits === null && "not-set") || "not-met"}
       data-meets-limit-geo={(program.meetsGeoLimits && "met") || (program.meetsGeoLimits === null && "not-set") || "not-met"}>
     <summary class="accordion-header py-1">
-      <strong class="flex-fill">
+      <div class="flex-fill">
         {program.program}
-      </strong>
+      </div>
       <span
         data-program-state={program.state}
         class={`ms-2 me-3 badge badge-outline rounded-pill 
