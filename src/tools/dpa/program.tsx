@@ -70,7 +70,7 @@ export function Program({
       <ul class="list-group list-group-flush" data-details="limits">
         <li class="list-group-item" data-limit="income">
           <p class="mb-0">
-            Financial Limit: <strong>{program.upperLimit}</strong>
+            Your household income must be below: <strong>{program.upperLimit}</strong>
           </p>
           <ul>
             {program.limits.map((limit) => (limit.householdSize && 
@@ -86,7 +86,7 @@ export function Program({
         {program.geoLimits.map((geoLimit) => (
           <li class="list-group-item" data-limit="geo">
             <p class="mb-0">
-              Geo Bound: <strong>{geoLimit}</strong>
+              Home must be in: <strong>{geoLimit}</strong>
             </p>
           </li>
         ))}

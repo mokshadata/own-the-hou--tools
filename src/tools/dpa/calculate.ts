@@ -238,7 +238,7 @@ export function getMatchingPrograms({
     .map((program) => ({
       ...program,
       limits: getPossibleLimits(householdSize).filter((limit) => limit.limitName === program.upperLimit),
-      meetsHouseholdLimits: householdSize && annualIncome && matchedLimits.includes(program.upperLimit) || null,
+      meetsHouseholdLimits: householdSize && annualIncome && matchedLimits.includes(program.upperLimit) || (!(householdSize && annualIncome) && null),
     }))
     .map((program) => ({
       ...program,

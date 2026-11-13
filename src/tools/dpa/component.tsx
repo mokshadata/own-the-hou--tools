@@ -1,8 +1,8 @@
 import type { Component } from "solid-js";
-import { createMemo, For, onSettled, createSignal } from "solid-js";
+import { createMemo, For, onSettled, createSignal, createEffect, Show } from "solid-js";
 
 import { getMatchingPrograms, } from "./calculate";
-import { getHTMLFromMarkdown } from "../../utilities/";
+import { formatCurrency } from "../../utilities/";
 
 import type { MatchingProgramParams } from "./calculate";
 
@@ -25,26 +25,6 @@ export interface DPAToolProps extends DPAProgramListProps {
   allowInputHouseholdIncome: boolean,
 
   allowInputCoordinates: boolean,
-}
-
-async function fetchPrograms({
-  householdSize,
-  annualIncome,
-  coordinates,
-  houseListingPrice,
-}: MatchingProgramParams): Promise<ProgramRenderable[]> {
-
-  const response = await (Promise.all(getMatchingPrograms({
-    householdSize,
-    annualIncome,
-    coordinates,
-    houseListingPrice,
-  }).map(async (program) => ({
-    ...program,
-    about: await getHTMLFromMarkdown(program.description),
-  }))))
-
-  return response
 }
 
 export const DPAProgramsList: Component<DPAProgramListProps> = ({
@@ -172,6 +152,41 @@ export const DPAProgramsListSummary: Component<DPAProgramListProps> = ({
   </div>)
 }
 
+export const MoneyInput: Component = (props) => {
+  const [value, setValue] = createSignal(props.defaultValue)
+  const maskedValue = () => value() && formatCurrency(value()) || null
+  const unmaskValue = (val) => (val.replaceAll(/(^\$|,)/g, '') * 1)
+
+  const handleInput = (e: InputEvent & { currentTarget: HTMLInputElement }) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.setCustomValidity('')
+    e.currentTarget.reportValidity()
+
+    const numericValue = unmaskValue(e.currentTarget.value)
+    setValue(numericValue)
+
+    if (Number.isNaN(numericValue)) {
+      e.currentTarget.setCustomValidity('Please type in only numbers.')
+      e.currentTarget.reportValidity()
+    } else {
+      props.onChange(e)
+    }
+  }
+
+  return (
+    <input
+      type="text"
+      inputmode="numeric"
+      {...props}
+      onInput={handleInput}
+      defaultValue={maskedValue()}
+      value={maskedValue()}
+      data-value={value()}
+    />
+  )
+}
+
 export const DPATool: Component<DPAToolProps> = ({
 
   initialTargetHomePrice,
@@ -179,13 +194,13 @@ export const DPATool: Component<DPAToolProps> = ({
   initialHouseholdIncome,
   initialCoordinates,
 
-  allowInputTargetDownPaymentPercent = true,
+  allowInputTargetDownPaymentPercent = false,
 
   allowInputTargetHomePrice = true,
   allowInputHouseholdSize = true,
   allowInputHouseholdIncome = true,
 
-  allowInputCoordinates = true,
+  allowInputCoordinates = false,
 }, node) => {
   
   onSettled(() => {
@@ -211,6 +226,8 @@ export const DPATool: Component<DPAToolProps> = ({
     }
   })
 
+  const [showOptions, setShowOptions] = createSignal(false);
+
   const [downPaymentPercentUpper, setDownPaymentPercentUpper] = createSignal(0.05);
   const [downPaymentPercentLower, setDownPaymentPercentLower] = createSignal(0.035);
 
@@ -223,21 +240,44 @@ export const DPATool: Component<DPAToolProps> = ({
 
   const coordinates = () => (longitude() && latitude() && [longitude(), latitude()] || null);
 
-  const programs = () => getMatchingPrograms({
+  const isValid = () => !(Number.isNaN(householdIncome() * 1) || Number.isNaN(householdSize() * 1) || Number.isNaN(houseListingPrice() * 1))
+
+  const programs = () => (getMatchingPrograms({
     householdSize: householdSize(),
     annualIncome: householdIncome(),
-    coordinates: coordinates(), // [-95.374543, 29.850715],
-    // coordinates: [-95.484657, 29.930173],
+    coordinates: coordinates(),
     houseListingPrice: houseListingPrice(),
-  });
-  
+  }).filter((program) => (!['ineligible','inactive'].includes(program.state))));
+
   return (<>
-    {(allowInputCoordinates || allowInputHouseholdIncome || allowInputHouseholdSize || allowInputTargetHomePrice) && <form>
+    <p>
+      <strong>
+        Down payment assistance programs in Texas help first time homebuyers with the initial home buying expenses.  Use this screener below to see if you qualify for one or more of these financial assistance programs.
+      </strong>
+    </p>
+    <p>This is not an application for assistance and only asks for basic information.  Each down payment assistance program will have more detailed applications.</p>
+    {(allowInputCoordinates || allowInputHouseholdIncome || allowInputHouseholdSize || allowInputTargetHomePrice) && <form
+      onSubmit={(submitEvent) => {
+        submitEvent.preventDefault()
+        if (!submitEvent.currentTarget.checkValidity()) {
+          submitEvent.currentTarget.reportValidity()
+          return
+        }
+
+        setShowOptions(true)
+      }}
+      onChange={() => {
+        if (!isValid()) {
+          setShowOptions(false)
+        }
+      }}
+    >
       {allowInputTargetDownPaymentPercent && <div class="mb-3">
         <label for="down-payment-percentage-target" class="form-label">Target Down Payment Percent</label>
         <input type="range" class="form-range" min="3.5" max="20" step="0.5" id="down-payment-percentage-target"
           onChange={(changeEvent) => {setDownPaymentPercentUpper(changeEvent.target.value * .01)}}
           defaultValue={downPaymentPercentUpper() * 100}
+          required
         />
       </div>}
       <div class="row mb-3">
@@ -245,27 +285,41 @@ export const DPATool: Component<DPAToolProps> = ({
           <label for="householdSize" class="form-label">How many people are part of your household?</label>
           <input
             type="number" class="form-control" id="householdSize" step="1"
+            min="1" max="15"
+            title="Household Size"
             // aria-describedby="householdSizeHelp"
             onChange={(changeEvent) => {setHouseholdSize(changeEvent.target.value * 1)}}
             defaultValue={householdSize()}
+            required
           />
           {/* <div id="householdSizeHelp" class="form-text"></div> */}
         </div>}
         {allowInputHouseholdIncome && <div class="col">
-          <label for="annualIncome" class="form-label">Household annual income is the total income of all of the people who live together (and are older than 15), even if they are not related to each other.</label>
-          <input
-            type="number" class="form-control" id="annualIncome" step="10000"
-            onChange={(changeEvent) => {setHouseholdIncome(changeEvent.target.value * 1)}}
+          <label for="annualIncome" class="form-label">What is your approximate annual household income?</label>
+          <MoneyInput
+            class="form-control" id="annualIncome"
+
+            step="10000" min="10000"
+            onChange={(changeEvent) => {
+              setHouseholdIncome(changeEvent.target.dataset.value * 1)
+            }}
             defaultValue={householdIncome()}
+            required
+            aria-describedby="annualIncome"
           />
+          <div class="form-text">
+            Household annual income is the total income of all of the people who live together (and are older than 15), even if they are not related to each other.
+          </div>
         </div>}
       </div>
       {allowInputTargetHomePrice && <div class="mb-3">
-        <label for="houseListingPrice" class="form-label">House listing price</label>
-        <input
-          type="number" class="form-control" id="houseListingPrice" step="10000"
-          onChange={(changeEvent) => {setHouseListingPrice(changeEvent.target.value * 1)}}
+        <label for="houseListingPrice" class="form-label">About how much do you expect to spend on your new home?</label>
+        <MoneyInput
+          class="form-control" id="houseListingPrice"
+          step="10000" min="50000"
+          onChange={(changeEvent) => {setHouseListingPrice(changeEvent.target.dataset.value * 1)}}
           defaultValue={houseListingPrice()}
+          required
         />
       </div>}
       {allowInputCoordinates && (<div class="row mb-3"><div class="col">
@@ -285,14 +339,28 @@ export const DPATool: Component<DPAToolProps> = ({
         />
       </div>
     </div>)}
-  </form>}
-  <For each={programs()}>{ (program) => (
-    <Program
-      program={program}
-      houseListingPrice={houseListingPrice}
-      downPaymentPercentUpper={downPaymentPercentUpper}
-      downPaymentPercentLower={downPaymentPercentLower}
+    <input type="submit" value="See my options" class="btn theme-primary" role="button"
+      disabled={showOptions() || !isValid()}
     />
-  )}</For>
+  </form>}
+  <Show when={showOptions() && isValid()}>
+    <div class="mt-8">
+      <Show when={programs().length === 0}>
+        <p>Sorry, no programs match your conditions.</p>
+      </Show>
+      <Show when={programs().length > 0}>
+        <p>You may be eligible for the following programs!</p>
+        <For each={programs()}>{ (program) => (
+          <Program
+          program={program}
+          houseListingPrice={houseListingPrice}
+          downPaymentPercentUpper={downPaymentPercentUpper}
+          downPaymentPercentLower={downPaymentPercentLower}
+          />
+        )}</For>
+      </Show>
+
+    </div>
+  </Show>
   </>)
 }
