@@ -281,7 +281,7 @@ export const DPATool: Component<DPAToolProps> = ({
         />
       </div>}
       <div class="row mb-3">
-        {allowInputHouseholdSize && <div class="col">
+        {allowInputHouseholdSize && <div class="xs:col md:col-6 lg:col-4">
           <label for="householdSize" class="form-label">How many people are part of your household?</label>
           <input
             type="number" class="form-control" id="householdSize" step="1"
@@ -294,7 +294,7 @@ export const DPATool: Component<DPAToolProps> = ({
           />
           {/* <div id="householdSizeHelp" class="form-text"></div> */}
         </div>}
-        {allowInputHouseholdIncome && <div class="col">
+        {allowInputHouseholdIncome && <div class="xs:col md:col-6 lg:col-4">
           <label for="annualIncome" class="form-label">What is your approximate annual household income?</label>
           <MoneyInput
             class="form-control" id="annualIncome"
@@ -311,18 +311,18 @@ export const DPATool: Component<DPAToolProps> = ({
             Household annual income is the total income of all of the people who live together (and are older than 15), even if they are not related to each other.
           </div>
         </div>}
+        {allowInputTargetHomePrice && <div class="xs:col md:col-6 lg:col-4 mb-3">
+          <label for="houseListingPrice" class="form-label">About how much do you expect to spend on your new home?</label>
+          <MoneyInput
+            class="form-control" id="houseListingPrice"
+            step="10000" min="50000"
+            onChange={(changeEvent) => {setHouseListingPrice(changeEvent.target.dataset.value * 1)}}
+            defaultValue={houseListingPrice()}
+            required
+          />
+        </div>}
       </div>
-      {allowInputTargetHomePrice && <div class="mb-3">
-        <label for="houseListingPrice" class="form-label">About how much do you expect to spend on your new home?</label>
-        <MoneyInput
-          class="form-control" id="houseListingPrice"
-          step="10000" min="50000"
-          onChange={(changeEvent) => {setHouseListingPrice(changeEvent.target.dataset.value * 1)}}
-          defaultValue={houseListingPrice()}
-          required
-        />
-      </div>}
-      {allowInputCoordinates && (<div class="row mb-3"><div class="col">
+      {allowInputCoordinates && (<div class="row mb-3"><div class="xs:col md:col-6 lg:col-4">
         <label for="longitude" class="form-label">Longitude</label>
         <input
           type="number" class="form-control" id="longitude" step="0.001"
@@ -330,7 +330,7 @@ export const DPATool: Component<DPAToolProps> = ({
           defaultValue={longitude()}
         />
       </div>
-      <div class="col">
+      <div class="xs:col md:col-6 lg:col-4">
         <label for="latitude" class="form-label">Latitude</label>
         <input
           type="number" class="form-control" id="latitude" step="0.001"

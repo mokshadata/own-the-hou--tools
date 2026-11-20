@@ -10,7 +10,7 @@
   "module": "./dist/ownthehoutools--dpa--solid.es.js",
   "types": "./dist/ownthehoutools--dpa--solid.d.ts",
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite",
     "build": "node build.js",
     "serve": "vite preview",
     "test": "vitest",
