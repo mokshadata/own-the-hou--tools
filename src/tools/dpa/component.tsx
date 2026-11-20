@@ -281,7 +281,7 @@ export const DPATool: Component<DPAToolProps> = ({
         />
       </div>}
       <div class="row mb-3">
-        {allowInputHouseholdSize && <div class="xs:col md:col-6 xl:col-4">
+        {allowInputHouseholdSize && <div class="xs:col xl:col-6 2xl:col-4">
           <label for="householdSize" class="form-label">How many people are part of your household?</label>
           <input
             type="number" class="form-control" id="householdSize" step="1"
@@ -294,7 +294,7 @@ export const DPATool: Component<DPAToolProps> = ({
           />
           {/* <div id="householdSizeHelp" class="form-text"></div> */}
         </div>}
-        {allowInputHouseholdIncome && <div class="xs:col md:col-6 xl:col-4">
+        {allowInputHouseholdIncome && <div class="xs:col xl:col-6 2xl:col-4">
           <label for="annualIncome" class="form-label">What is your approximate annual household income?</label>
           <MoneyInput
             class="form-control" id="annualIncome"
@@ -311,7 +311,7 @@ export const DPATool: Component<DPAToolProps> = ({
             Household annual income is the total income of all of the people who live together (and are older than 15), even if they are not related to each other.
           </div>
         </div>}
-        {allowInputTargetHomePrice && <div class="xs:col md:col-6 xl:col-4 mb-3">
+        {allowInputTargetHomePrice && <div class="xs:col xl:col-6 2xl:col-4 mb-3">
           <label for="houseListingPrice" class="form-label">About how much do you expect to spend on your new home?</label>
           <MoneyInput
             class="form-control" id="houseListingPrice"
@@ -322,7 +322,7 @@ export const DPATool: Component<DPAToolProps> = ({
           />
         </div>}
       </div>
-      {allowInputCoordinates && (<div class="row mb-3"><div class="xs:col md:col-6 xl:col-4">
+      {allowInputCoordinates && (<div class="row mb-3"><div class="xs:col xl:col-6 2xl:col-4">
         <label for="longitude" class="form-label">Longitude</label>
         <input
           type="number" class="form-control" id="longitude" step="0.001"
@@ -330,7 +330,7 @@ export const DPATool: Component<DPAToolProps> = ({
           defaultValue={longitude()}
         />
       </div>
-      <div class="xs:col md:col-6 xl:col-4">
+      <div class="xs:col xl:col-6 2xl:col-4">
         <label for="latitude" class="form-label">Latitude</label>
         <input
           type="number" class="form-control" id="latitude" step="0.001"
