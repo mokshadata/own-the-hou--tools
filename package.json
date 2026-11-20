@@ -28,7 +28,7 @@
     "@testing-library/jest-dom": "^7.0.0",
     "@types/geojson": "^7946.0.16",
     "eslint-plugin-solid": "~0.18.1",
-    "filesystem-routing": "0.4.0",
+    "filesystem-routing": "0.5.0",
     "jsdom": "^25.0.1",
     "oxlint": "~1.79.0",
     "rehype-external-links": "^3.0.0",
