@@ -21,7 +21,8 @@ export const currencyFormatter = new Intl.NumberFormat("en-US",{
 })
 
 export const percentFormatter = new Intl.NumberFormat('en-US', {
-  style: 'percent'
+  style: 'percent',
+  maximumFractionDigits: 2,
 })
 
 export function formatCurrency(cost: number) {
@@ -30,4 +31,29 @@ export function formatCurrency(cost: number) {
 
 export function formatPercent(input: number) {
   return percentFormatter.format(input)
+}
+
+export function handleWebComponentStyling(node) {
+  return () => {
+
+    if (!node) { return }
+    const shadowRoot = node.element.shadowRoot;
+    let parentStyles = new CSSStyleSheet();
+    parentStyles.replaceSync(`
+      ${
+        [...shadowRoot.ownerDocument.styleSheets]
+          .reduce((result, sheet) => (
+            [...result, ...[...sheet.cssRules].map((rule) => (rule.cssText))]
+          ), [])
+          .join('')
+      }
+    `)
+
+    if (shadowRoot && parentStyles) {
+      shadowRoot.adoptedStyleSheets = [
+        ...shadowRoot.adoptedStyleSheets,
+        parentStyles,
+      ]
+    }
+  }
 }

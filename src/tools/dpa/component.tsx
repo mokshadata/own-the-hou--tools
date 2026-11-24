@@ -2,9 +2,8 @@ import type { Component } from "solid-js";
 import { createMemo, For, onSettled, createSignal, createEffect, Show } from "solid-js";
 
 import { getMatchingPrograms, } from "./calculate";
-import { formatCurrency } from "../../utilities/";
-
-import type { MatchingProgramParams } from "./calculate";
+import MoneyInput from "../../components/MoneyInput";
+import { handleWebComponentStyling } from '../../utilities'
 
 import { Program, ProgramBadge, ProgramSummary } from "./program";
 
@@ -36,28 +35,7 @@ export const DPAProgramsList: Component<DPAProgramListProps> = ({
 
 }, node) => {
   
-  onSettled(() => {
-
-    if (!node) { return }
-    const shadowRoot = node.element.shadowRoot;
-    let parentStyles = new CSSStyleSheet();
-    parentStyles.replaceSync(`
-      ${
-        [...shadowRoot.ownerDocument.styleSheets]
-          .reduce((result, sheet) => (
-            [...result, ...[...sheet.cssRules].map((rule) => (rule.cssText))]
-          ), [])
-          .join('')
-      }
-    `)
-
-    if (shadowRoot && parentStyles) {
-      shadowRoot.adoptedStyleSheets = [
-        ...shadowRoot.adoptedStyleSheets,
-        parentStyles,
-      ]
-    }
-  })
+  onSettled(handleWebComponentStyling(node))
 
   const [downPaymentPercentUpper, setDownPaymentPercentUpper] = createSignal(0.05);
   const [downPaymentPercentLower, setDownPaymentPercentLower] = createSignal(0.035);
@@ -152,40 +130,6 @@ export const DPAProgramsListSummary: Component<DPAProgramListProps> = ({
   </div>)
 }
 
-export const MoneyInput: Component = (props) => {
-  const [value, setValue] = createSignal(props.defaultValue)
-  const maskedValue = () => value() && formatCurrency(value()) || null
-  const unmaskValue = (val) => (val.replaceAll(/(^\$|,)/g, '') * 1)
-
-  const handleInput = (e: InputEvent & { currentTarget: HTMLInputElement }) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.currentTarget.setCustomValidity('')
-    e.currentTarget.reportValidity()
-
-    const numericValue = unmaskValue(e.currentTarget.value)
-    setValue(numericValue)
-
-    if (Number.isNaN(numericValue)) {
-      e.currentTarget.setCustomValidity('Please type in only numbers.')
-      e.currentTarget.reportValidity()
-    } else {
-      props.onChange(e)
-    }
-  }
-
-  return (
-    <input
-      type="text"
-      inputmode="numeric"
-      {...props}
-      onInput={handleInput}
-      defaultValue={maskedValue()}
-      value={maskedValue()}
-      data-value={value()}
-    />
-  )
-}
 
 export const DPATool: Component<DPAToolProps> = ({
 
