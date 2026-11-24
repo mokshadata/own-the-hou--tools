@@ -274,7 +274,10 @@ export const DPATool: Component<DPAToolProps> = ({
     >
       {allowInputTargetDownPaymentPercent && <div class="mb-3">
         <label for="down-payment-percentage-target" class="form-label">Target Down Payment Percent</label>
-        <input type="range" class="form-range" min="3.5" max="20" step="0.5" id="down-payment-percentage-target"
+        <input type="range" class="form-range" min="3.5" max="20" step="0.5"
+          name="down-payment-percentage-target"
+          id="down-payment-percentage-target"
+          title="Down Payment Percentage Target"
           onChange={(changeEvent) => {setDownPaymentPercentUpper(changeEvent.target.value * .01)}}
           defaultValue={downPaymentPercentUpper() * 100}
           required
@@ -282,10 +285,12 @@ export const DPATool: Component<DPAToolProps> = ({
       </div>}
       <div class="row mb-3">
         {allowInputHouseholdSize && <div class="xs:col xl:col-6 2xl:col-4">
-          <label for="householdSize" class="form-label">How many people are part of your household?</label>
+          <label for="household-size" class="form-label">How many people are part of your household?</label>
           <input
-            type="number" class="form-control" id="householdSize" step="1"
+            type="number" class="form-control" step="1"
             min="1" max="15"
+            name="household-size"
+            id="household-size"
             title="Household Size"
             // aria-describedby="householdSizeHelp"
             onChange={(changeEvent) => {setHouseholdSize(changeEvent.target.value * 1)}}
@@ -295,26 +300,29 @@ export const DPATool: Component<DPAToolProps> = ({
           {/* <div id="householdSizeHelp" class="form-text"></div> */}
         </div>}
         {allowInputHouseholdIncome && <div class="xs:col xl:col-6 2xl:col-4">
-          <label for="annualIncome" class="form-label">What is your approximate annual household income?</label>
+          <label for="annual-income" class="form-label">What is your approximate annual household income?</label>
           <MoneyInput
-            class="form-control" id="annualIncome"
-
+            class="form-control"
+            name="annual-income"
+            id="annual-income"
+            aria-describedby="annual-income-help"
             step="10000" min="10000"
             onChange={(changeEvent) => {
               setHouseholdIncome(changeEvent.target.dataset.value * 1)
             }}
             defaultValue={householdIncome()}
             required
-            aria-describedby="annualIncome"
           />
-          <div class="form-text">
+          <div class="form-text" id="annual-income-help">
             Household annual income is the total income of all of the people who live together (and are older than 15), even if they are not related to each other.
           </div>
         </div>}
         {allowInputTargetHomePrice && <div class="xs:col xl:col-6 2xl:col-4 mb-3">
-          <label for="houseListingPrice" class="form-label">About how much do you expect to spend on your new home?</label>
+          <label for="house-listing-price" class="form-label">About how much do you expect to spend on your new home?</label>
           <MoneyInput
-            class="form-control" id="houseListingPrice"
+            class="form-control"
+            id="house-listing-price"
+            name="house-listing-price"
             step="10000" min="50000"
             onChange={(changeEvent) => {setHouseListingPrice(changeEvent.target.dataset.value * 1)}}
             defaultValue={houseListingPrice()}
@@ -325,7 +333,10 @@ export const DPATool: Component<DPAToolProps> = ({
       {allowInputCoordinates && (<div class="row mb-3"><div class="xs:col xl:col-6 2xl:col-4">
         <label for="longitude" class="form-label">Longitude</label>
         <input
-          type="number" class="form-control" id="longitude" step="0.001"
+          type="number" class="form-control"
+          step="0.001"
+          name="longitude"
+          id="longitude"
           onChange={(changeEvent) => {setLongitude(changeEvent.target.value * 1)}}
           defaultValue={longitude()}
         />
@@ -333,13 +344,16 @@ export const DPATool: Component<DPAToolProps> = ({
       <div class="xs:col xl:col-6 2xl:col-4">
         <label for="latitude" class="form-label">Latitude</label>
         <input
-          type="number" class="form-control" id="latitude" step="0.001"
+          type="number" class="form-control"
+          step="0.001"
+          name="latitude"
+          id="latitude"
           onChange={(changeEvent) => {setLatitude(changeEvent.target.value * 1)}}
           defaultValue={latitude()}
         />
       </div>
     </div>)}
-    <input type="submit" value="See my options" class="btn theme-primary" role="button"
+    <input type="submit" value={`${(showOptions() && isValid()) && 'Your options are below' || 'See my options'}`} class={`btn ${(showOptions() && isValid()) && 'btn-outline' || 'btn-solid'} theme-primary`} role="button"
       disabled={showOptions() || !isValid()}
     />
   </form>}
