@@ -1,0 +1,1 @@
+export { LoanEstimateComparisonTool } from './component.tsx'

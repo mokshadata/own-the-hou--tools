@@ -1,30 +1,18 @@
 import { Title } from '@solidjs/meta';
-import Counter from '../components/Counter';
-import logo from '../logo.svg';
+import { DPATool } from '../tools/dpa/component';
+import { DTICalculator } from '../tools/dti-calculator/component';
+import { LoanEstimateComparisonTool } from '../tools/loan-estimate-comparison/component';
 
 export default function Home() {
   return (
     <main class="container py-5">
-      <Title>Home - Solid App</Title>
-      <img
-        src={logo}
-        class="logo-spin pe-none"
-        style={{ height: '24vmin' }}
-        alt="Solid logo"
-      />
-      <h1 class="my-3">Hello Solid!</h1>
-      <Counter />
-      <p class="my-3">
-        Edit <code>src/routes/index.tsx</code> and save to reload.
-      </p>
-      <a
-        class="fw-semibold link-primary link-offset-2 link-underline-opacity-50 link-underline-opacity-100-hover focus-ring rounded-1"
-        href="https://v2.solidjs.com/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Learn Solid
-      </a>
+      <Title>Own the HOU - Tools Prototypes</Title>
+      <h1>DPA Tool</h1>
+      <DPATool/>
+      <h1>DTI Calculator</h1>
+      <DTICalculator/>
+      <h1>Loan Estimate Comparison Tool</h1>
+      <LoanEstimateComparisonTool/>
     </main>
   );
 }

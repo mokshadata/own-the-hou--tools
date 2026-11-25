@@ -9,21 +9,7 @@ export default function App() {
     <Router>
       {(props) => (
         <>
-          <Title>Solid App</Title>
-          <nav class="navbar justify-content-center gap-3 bg-dark p-3" data-bs-theme="dark">
-            <a
-              class="nav-link rounded px-3 fw-semibold focus-ring focus-ring-info"
-              href={paths()}
-            >
-              Home
-            </a>
-            <a
-              class="nav-link rounded px-3 fw-semibold focus-ring focus-ring-info"
-              href={paths.users()}
-            >
-              Users
-            </a>
-          </nav>
+          <Title>Own the HOU - Tools</Title>
           <Loading fallback={<main class="container py-5">Loading…</main>}>
             {props.children}
           </Loading>
