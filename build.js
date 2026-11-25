@@ -21,7 +21,7 @@ const plugins =  [
     // `extensions` makes @solidjs/vite-plugin also compile the `?pick=` route
     // modules the fileRoutes plugin emits (their ids end in a query string).
     // solid({ start: true, extensions: ['.jsx', '.tsx'], diagnostics: true }), // add `ssr: true` for streaming SSR
-    solid({ start: false, extensions: ['.jsx', '.tsx'], diagnostics: true }), // add `ssr: true` for streaming SSR
+    solid({ start: false, extensions: ['.jsx', '.tsx'], diagnostics: false }), // add `ssr: true` for streaming SSR
     // fileRoutes({ types: true }),
     {
       name: 'geojson-loader',
@@ -61,8 +61,11 @@ const entries = {
   'ownthehoutools--dpa-program-list--web': path.resolve(import.meta.dirname, 'src/tools/dpa/web/list.ts'),
   'ownthehoutools--dpa-tool--web': path.resolve(import.meta.dirname, 'src/tools/dpa/web/tool.ts'),
   'ownthehoutools--dpa--solid': path.resolve(import.meta.dirname, 'src/tools/dpa/component.ts'),
+  'ownthehoutools--dti-calculator--web': path.resolve(import.meta.dirname, 'src/tools/dti-calculator/web/tool.ts'),
+  'ownthehoutools--dti-calculator--solid': path.resolve(import.meta.dirname, 'src/tools/dti-calculator/component.ts'),
+  'ownthehoutools--loan-estimate-comparison--web': path.resolve(import.meta.dirname, 'src/tools/loan-estimate-comparison/web/tool.ts'),
+  'ownthehoutools--loan-estimate-comparison--solid': path.resolve(import.meta.dirname, 'src/tools/loan-estimate-comparison/component.ts'),
 }
-
 
 async function buildAll() {
   for (const [key, item] of Object.entries(entries)) {
